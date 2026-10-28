@@ -1,0 +1,593 @@
+
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Learn Backend API",
+    "version": "1.0.0",
+    "description": "Interactive API documentation for the Node.js and Express backend learning project. Product data is stored in memory."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000",
+      "description": "Local development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Products",
+      "description": "Create, retrieve, update, delete, search, filter, sort and paginate products."
+    },
+    {
+      "name": "Product API Version 2",
+      "description": "Version 2 product endpoints."
+    }
+  ],
+  "paths": {
+    "/api/v1/products": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Get all products",
+        "description": "Returns the product list.",
+        "responses": {
+          "200": {
+            "description": "Products retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Products"],
+        "summary": "Create a product",
+        "description": "Creates a product using the supplied name and price.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductInput"
+              },
+              "example": {
+                "name": "Laptop Stand",
+                "price": 1200
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid product data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products/options": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Search, filter, sort and paginate products",
+        "description": "Returns products matching the supplied query parameters. Search is a case-insensitive partial match on the product name.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "description": "Search for part of a product name.",
+            "schema": {
+              "type": "string",
+              "example": "lap"
+            }
+          },
+          {
+            "name": "minPrice",
+            "in": "query",
+            "required": false,
+            "description": "Minimum product price.",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "example": 1000
+            }
+          },
+          {
+            "name": "maxPrice",
+            "in": "query",
+            "required": false,
+            "description": "Maximum product price.",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "example": 10000
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Sort products by price.",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "example": "asc"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number. Must be a positive integer.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of products per page. Must be a positive integer.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching products retrieved successfully. No matches result in an empty data array.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedProductResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid price range, sorting value or pagination parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products/{id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ProductId"
+        }
+      ],
+      "get": {
+        "tags": ["Products"],
+        "summary": "Get a product by ID",
+        "responses": {
+          "200": {
+            "description": "Product retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Products"],
+        "summary": "Update a product",
+        "description": "Updates the product using the supplied name and price. Repeating the same update leaves the same final values.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductInput"
+              },
+              "example": {
+                "name": "Laptop",
+                "price": 40000
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid product data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Products"],
+        "summary": "Partially update a product",
+        "description": "Updates the supplied product fields. Accepted fields depend on the implementation.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductPatch"
+              },
+              "example": {
+                "price": 45000
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid update data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Products"],
+        "summary": "Delete a product",
+        "responses": {
+          "200": {
+            "description": "Product deleted successfully."
+          },
+          "204": {
+            "description": "Product deleted successfully with no response body."
+          },
+          "404": {
+            "description": "Product not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products/{id}/increase-price": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ProductId"
+        }
+      ],
+      "post": {
+        "tags": ["Products"],
+        "summary": "Increase product price",
+        "description": "Temporary learning endpoint. Adds 1000 to the product's current price each time it is called. This operation is non-idempotent. Confirm this route exists in the Express application.",
+        "responses": {
+          "200": {
+            "description": "Product price increased successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/products": {
+      "get": {
+        "tags": ["Product API Version 2"],
+        "summary": "Get products from version 2",
+        "description": "Returns products with an additional inStock field.",
+        "responses": {
+          "200": {
+            "description": "Products retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductV2ListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "ProductId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Unique product ID.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "example": 1
+        }
+      }
+    },
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "required": ["id", "name", "price"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Laptop"
+          },
+          "price": {
+            "type": "number",
+            "example": 50000
+          }
+        }
+      },
+      "ProductV2": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Product"
+          },
+          {
+            "type": "object",
+            "required": ["inStock"],
+            "properties": {
+              "inStock": {
+                "type": "boolean",
+                "example": true
+              }
+            }
+          }
+        ]
+      },
+      "ProductInput": {
+        "type": "object",
+        "required": ["name", "price"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Laptop Stand"
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0,
+            "example": 1200
+          }
+        }
+      },
+      "ProductPatch": {
+        "type": "object",
+        "minProperties": 1,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Updated Laptop"
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0,
+            "example": 45000
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductResponse": {
+        "type": "object",
+        "required": ["success", "message", "data"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Product retrieved successfully"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Product"
+          }
+        }
+      },
+      "ProductListResponse": {
+        "type": "object",
+        "required": ["success", "message", "data"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Products retrieved successfully"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          }
+        }
+      },
+      "PaginatedProductResponse": {
+        "type": "object",
+        "required": ["success", "message", "data", "pagination"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Products retrieved successfully"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer",
+                "example": 1
+              },
+              "limit": {
+                "type": "integer",
+                "example": 5
+              },
+              "totalProducts": {
+                "type": "integer",
+                "example": 15
+              },
+              "totalPages": {
+                "type": "integer",
+                "example": 3
+              }
+            }
+          }
+        }
+      },
+      "ProductV2ListResponse": {
+        "type": "object",
+        "required": ["success", "message", "data"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Products retrieved successfully"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductV2"
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["success", "message", "data"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Product not found"
+          },
+          "data": {
+            "nullable": true,
+            "example": null
+          }
+        }
+      }
+    }
+  }
+}
