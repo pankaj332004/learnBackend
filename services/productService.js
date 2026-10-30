@@ -209,7 +209,8 @@
 const Product = require("../models/product");
 
 async function findProductById(id) {
-    return Product.findOne({ id });
+    // return Product.findOne({ id });
+    return Product.findById(id)
 }
 
 async function findProductsByName(name) {
@@ -234,23 +235,39 @@ async function createProduct(name, price) {
 }
 
 async function updateProduct(id, name, price) {
-    return Product.findOneAndUpdate(
-        { id },
+    // return Product.findOneAndUpdate(
+    //     { id },
+    //     { name, price },
+    //     { new: true, runValidators: true }
+    // );
+    return Product.findByIdAndUpdate(
+        id ,
         { name, price },
         { new: true, runValidators: true }
     );
 }
 
-async function patchProduct(id, updates) {
-    return Product.findOneAndUpdate(
-        { id },
-        { $set: updates },
-        { new: true, runValidators: true }
-    );
+// async function patchProduct(id, updates) {
+//     return Product.findOneAndUpdate(
+//         { id },
+//         { $set: updates },
+//         { new: true, runValidators: true }
+//     );
+// }
+async function patchProduct(id, updates){
+    return Product.findByIdAndDelete(
+        id,
+        {$set:updates},
+        {new:true, runValidators:true}
+    )
 }
 
-async function deleteProduct(id) {
-    return Product.findOneAndDelete({ id });
+// async function deleteProduct(id) {
+//     return Product.findOneAndDelete({ id });
+// }
+
+async function deleteProduct(id){
+    return Product.findByIdAndDelete(id);
 }
 
 async function getProductsWithOptions(options) {
@@ -348,10 +365,15 @@ async function getProductsWithOptions(options) {
 }
 
 async function increaseProductPrice(id, amount) {
-    return Product.findOneAndUpdate(
-        { id },
-        { $inc: { price: amount } },
-        { new: true, runValidators: true }
+    // return Product.findOneAndUpdate(
+    //     { id },
+    //     { $inc: { price: amount } },
+    //     { new: true, runValidators: true }
+    // );
+    return Product.findByIdAndUpdate(
+        id,
+        {$inc: {price: amount} },
+        {new: true, runValidators: true}
     );
 }
 

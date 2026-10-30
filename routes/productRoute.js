@@ -14,6 +14,9 @@ const {
     increaseProductPriceController
 } = require("../controllers/productController");
 
+const requirePermission =
+  require("../middleware/permissionMiddleware");
+
 const {
     authenticateUser,
     requireAdmin
@@ -24,20 +27,36 @@ route.get("/",getAllProductsController);
 route.get("/:id", getProductById);
 route.get("/name/:name",getProductsByName);
 
-route.post("/", createProduct);
+route.post("/", 
+    authenticateUser,
+    requirePermission("product:create"),
+    createProduct
+);
+
 route.post(
     "/:id/increase-price",
+    authenticateUser,
+    requirePermission("product:update"),
     increaseProductPriceController
 );
 
-route.put("/:id", updateProductController);
+route.put("/:id", 
+    authenticateUser,
+    requirePermission("product:update"),
+    updateProductController
+);
 
-route.patch("/:id", patchProductController);
+route.patch("/:id",
+    authenticateUser,
+    requirePermission("product:update"),
+    patchProductController
+);
 
 route.delete(
     "/:id",
     authenticateUser,
     requireAdmin,
+    requirePermission("product:delete"),
     deleteProductController
 );
 

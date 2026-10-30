@@ -257,6 +257,7 @@
 //     increaseProductPriceController
 // };
 
+const mongoose = require("mongoose");
 
 const {
     findProductById,
@@ -278,9 +279,16 @@ const {
 // 1. GET product by ID
 async function getProductById(req, res, next) {
     try {
-        const id = Number(req.params.id);
+        // const id = Number(req.params.id);
+        const id = req.params.id;
 
-        if (!Number.isInteger(id) || id <= 0) {
+        // if (!Number.isInteger(id) || id <= 0) {
+        //     return res.status(400).json(
+        //         errorResponse("Invalid product ID")
+        //     );
+        // }
+        
+        if(!mongoose.isValidObjectId(id)){
             return res.status(400).json(
                 errorResponse("Invalid product ID")
             );
@@ -370,10 +378,16 @@ async function getAllProductsController(req, res, next) {
 // 5. PUT - replace product name and price
 async function updateProductController(req, res, next) {
     try {
-        const id = Number(req.params.id);
+        // const id = Number(req.params.id);
+        const id = req.params.id;
         const { name, price } = req.body;
 
-        if (!Number.isInteger(id) || id <= 0) {
+        // if (!Number.isInteger(id) || id <= 0) {
+        //     return res.status(400).json(
+        //         errorResponse("Invalid product ID")
+        //     );
+        // }
+        if(!mongoose.isValidObjectId(id)){
             return res.status(400).json(
                 errorResponse("Invalid product ID")
             );
@@ -414,10 +428,17 @@ async function updateProductController(req, res, next) {
 // 6. PATCH - update selected fields
 async function patchProductController(req, res, next) {
     try {
-        const id = Number(req.params.id);
+        // const id = Number(req.params.id);
+        const id = req.params.id;
         const { name, price } = req.body;
 
-        if (!Number.isInteger(id) || id <= 0) {
+        // if (!Number.isInteger(id) || id <= 0) {
+        //     return res.status(400).json(
+        //         errorResponse("Invalid product ID")
+        //     );
+        // }
+
+        if(!mongoose.isValidObjectId(id)){
             return res.status(400).json(
                 errorResponse("Invalid product ID")
             );
@@ -480,14 +501,21 @@ async function patchProductController(req, res, next) {
 // 7. DELETE a product
 async function deleteProductController(req, res, next) {
     try {
-        const id = Number(req.params.id);
+        // const id = Number(req.params.id);
+        const id = req.params.id;
 
-        if (!Number.isInteger(id) || id <= 0) {
+        // if (!Number.isInteger(id) || id <= 0) {
+        //     return res.status(400).json(
+        //         errorResponse("Invalid product ID")
+        //     );
+        // }
+        if(!mongoose.isValidObjectId(id)){
             return res.status(400).json(
                 errorResponse("Invalid product ID")
             );
         }
 
+        // const product = await deleteProduct(id);
         const product = await deleteProduct(id);
 
         if (!product) {
@@ -559,11 +587,17 @@ async function getProductsWithOptionsController(req, res, next) {
 // 9. Increase a product's price by 1000
 async function increaseProductPriceController(req, res, next) {
     try {
-        const id = Number(req.params.id);
+        // const id = Number(req.params.id);
+        const id = req.params.id;
 
-        if (!Number.isInteger(id) || id <= 0) {
+        // if (!Number.isInteger(id) || id <= 0) {
+        //     return res.status(400).json(
+        //         errorResponse("Invalid product ID")
+        //     );
+        // }
+        if(!mongoose.isValidObjectId(id)){
             return res.status(400).json(
-                errorResponse("Invalid product ID")
+                errorResponse("Invalid product Id")
             );
         }
 
