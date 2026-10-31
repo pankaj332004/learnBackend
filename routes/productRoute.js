@@ -42,13 +42,13 @@ route.post(
 
 route.put("/:id", 
     authenticateUser,
-    requirePermission("product:update"),
+    requirePermission("product:update:own"),
     updateProductController
 );
 
 route.patch("/:id",
     authenticateUser,
-    requirePermission("product:update"),
+    requirePermission("product:update:own"),
     patchProductController
 );
 

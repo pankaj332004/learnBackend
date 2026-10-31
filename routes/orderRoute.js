@@ -14,6 +14,7 @@ const{
     requireAdmin
 } = require("../middleware/authMiddleware");
 
+// customer
 route.post(
     "/",
     authenticateUser,
@@ -29,6 +30,8 @@ route.get(
   authenticateUser,
   getMyOrderByIdController
 );
+
+// admin
 route.get(
     "/admin/:id",
     authenticateUser,

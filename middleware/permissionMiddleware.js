@@ -27,7 +27,6 @@ const rolePermissions = {
 
 function requirePermission(permission) {
   return (req, res, next) => {
-    const userRole = req.user.role;
 
     if(!req.user){
       return res.status(401).json(
@@ -35,6 +34,7 @@ function requirePermission(permission) {
       );
     }
 
+    const userRole = req.user.role;
     const permissions = rolePermissions[userRole] || [];
 
     if (!permissions.includes(permission)) {

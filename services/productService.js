@@ -221,29 +221,38 @@ async function getAllProducts() {
     return Product.find();
 }
 
-async function createProduct(name, price) {
+async function createProduct(sellerId, name, price) {
     // Suitable for this local learning project.
     // Concurrent production requests need a safer ID-generation strategy.
     const lastProduct = await Product.findOne().sort({ id: -1 });
     const newId = lastProduct ? lastProduct.id + 1 : 1;
 
     return Product.create({
+        seller: sellerId,
         id: newId,
         name,
         price
     });
 }
 
-async function updateProduct(id, name, price) {
+async function updateProduct(id, name, price, sellerId) {
     // return Product.findOneAndUpdate(
     //     { id },
     //     { name, price },
     //     { new: true, runValidators: true }
     // );
-    return Product.findByIdAndUpdate(
-        id ,
-        { name, price },
-        { new: true, runValidators: true }
+    return Product.findOneAndUpdate(
+        {
+            _id: id,
+            seller: sellerId
+        },
+        {
+            $set: { name, price }
+        },
+        {
+            new: true,
+            runValidators: true
+        }
     );
 }
 
@@ -254,11 +263,19 @@ async function updateProduct(id, name, price) {
 //         { new: true, runValidators: true }
 //     );
 // }
-async function patchProduct(id, updates){
-    return Product.findByIdAndDelete(
-        id,
-        {$set:updates},
-        {new:true, runValidators:true}
+async function patchProduct(id, updates, sellerId){
+    return Product.findOneAndUpdate(
+        {
+            _id: id,
+            seller: sellerId
+        },
+        {
+            $set:updates
+        },
+        {
+            new:true, 
+            runValidators:true
+        }
     )
 }
 
@@ -266,8 +283,13 @@ async function patchProduct(id, updates){
 //     return Product.findOneAndDelete({ id });
 // }
 
-async function deleteProduct(id){
-    return Product.findByIdAndDelete(id);
+async function deleteProduct(id,sellerId){
+    return Product.findOneAndDelete(
+        {
+            _id: id,
+            seller: sellerId
+        }
+    );
 }
 
 async function getProductsWithOptions(options) {
@@ -364,16 +386,24 @@ async function getProductsWithOptions(options) {
     };
 }
 
-async function increaseProductPrice(id, amount) {
+async function increaseProductPrice(id, amount, sellerId) {
     // return Product.findOneAndUpdate(
     //     { id },
     //     { $inc: { price: amount } },
     //     { new: true, runValidators: true }
     // );
-    return Product.findByIdAndUpdate(
-        id,
-        {$inc: {price: amount} },
-        {new: true, runValidators: true}
+    return Product.findOneAndUpdate(
+        {
+            _id: id,
+            seller: sellerId
+        },
+        {
+            $inc: {price: amount} 
+        },
+        {
+            new: true, 
+            runValidators: true
+        }
     );
 }
 

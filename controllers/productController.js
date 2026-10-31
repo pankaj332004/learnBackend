@@ -352,7 +352,11 @@ async function createProduct(req, res, next) {
             );
         }
 
-        const product = await createProductService(name.trim(), price);
+        const product = await createProductService(
+            req.user.id,
+            name.trim(), 
+            price
+        );
 
         return res.status(201).json(
             successResponse("Product created successfully", product)
@@ -409,7 +413,12 @@ async function updateProductController(req, res, next) {
             );
         }
 
-        const product = await updateProduct(id, name.trim(), price);
+        const product = await updateProduct(
+            id, 
+            name.trim(), 
+            price,
+            req.user.id
+        );
 
         if (!product) {
             return res.status(404).json(
@@ -482,7 +491,11 @@ async function patchProductController(req, res, next) {
             updates.price = price;
         }
 
-        const product = await patchProduct(id, updates);
+        const product = await patchProduct(
+            id, 
+            updates,
+            req.user.id
+        );
 
         if (!product) {
             return res.status(404).json(
@@ -516,7 +529,10 @@ async function deleteProductController(req, res, next) {
         }
 
         // const product = await deleteProduct(id);
-        const product = await deleteProduct(id);
+        const product = await deleteProduct(
+            id,
+            req.user.id
+        );
 
         if (!product) {
             return res.status(404).json(
@@ -602,7 +618,11 @@ async function increaseProductPriceController(req, res, next) {
         }
 
         const amount = 1000;
-        const product = await increaseProductPrice(id, amount);
+        const product = await increaseProductPrice(
+            id, 
+            amount,
+            req.user.id
+        );
 
         if (!product) {
             return res.status(404).json(

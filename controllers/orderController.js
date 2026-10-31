@@ -13,35 +13,71 @@ const {
 } = require("../utils/apiResponse")
 
 // Get orders by id — for admin use
-function getOrderById(req,res){
+async function getOrderById(req,res, next){
+try{
+    const {id} = req.params;
 
-    const id = req.params.id;
     if(!mongoose.isValidObjectId(id)){
         return res.status(400).json(
             errorResponse("Invalid Order ID")
         )
     }
 
-    const order = findOrderById(id);
+    const order = await findOrderById(id);
     if(!order){
         return res.status(404).json(
             errorResponse("Order Not Found")
         )
     }
 
+    // console.log("Order result:", order);
+    // console.log("Order type:", order.constructor.name);
+
     res.json(
         successResponse("order retrieved successfully", order)
     )
+
+}catch (err) {
+    next(err);
+  }
 }
 
 // Get orders by status — for admin use
-function getOrderByStatus(req,res){
-    const status = req.params.status;
-    const order = findOrderByStatus(status);
+async function getOrderByStatus(req,res){
+    // const { status } = req.params;
+    // const order = await findOrderByStatus(status);
     
-    res.json(
-        successResponse("order retrieved successfully", order)
+    // res.json(
+    //     successResponse("order retrieved successfully", order)
+    // );
+     try {
+    const { status } = req.params;
+
+    const allowedStatuses = [
+      "pending",
+      "confirmed",
+      "shipped",
+      "delivered",
+      "cancelled"
+    ];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json(
+        errorResponse("Invalid order status")
+      );
+    }
+
+    const orders = await findOrderByStatus(status);
+
+    return res.status(200).json(
+      successResponse(
+        "Orders retrieved successfully",
+        orders
+      )
     );
+  } catch (err) {
+    next(err);
+  }
 }
 
 // Create an order for the logged-in customer
