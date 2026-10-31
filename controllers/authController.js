@@ -89,15 +89,18 @@ async function loginController(req, res, next) {
 
 async function registerController(req,res, next){
     try {
-        const {email, password} = req.body;
+        const {name, email, password} = req.body;
 
-        if(typeof email !== "string" ||
+        if(
+            typeof name !== "string" || 
+            typeof email !== "string" ||
             typeof password !== "string" ||
             !email.trim() ||
-             !password
-            ){
+            !password || 
+            !name.trim()
+        ){
             return res.status(400).json(
-                errorResponse("Email and password are required")
+                errorResponse("Name , email and password are required")
             );
         }
 
@@ -124,6 +127,7 @@ async function registerController(req,res, next){
         const hashedPassword = await bcrypt.hash(password,10);
 
         const newUser = await User.create({
+            name: name,
             email: normalizedEmail,
             password: hashedPassword
         });
@@ -131,6 +135,7 @@ async function registerController(req,res, next){
         return res.status(201).json(
             successResponse("Registration successful",{
                 id: newUser._id,
+                name: newUser.name,
                 email: newUser.email
             })
         );

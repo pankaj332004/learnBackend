@@ -46,7 +46,7 @@ app.get("/check-session", (req, res) => {
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v2/products", productV2Routes);
-app.use("/orders", orderRoutes);
+app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/sessions", sessionRoute);
 app.use("/api/v1/cookies", cookieRoute);
